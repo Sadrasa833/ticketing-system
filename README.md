@@ -1,49 +1,74 @@
-# 🎫 سیستم تیکتینگ پشتیبانی
+# 🎫 سیستم تیکتینگ پشتیبانی (Helpdesk Ticketing System)
 
-## نصب و راه‌اندازی
+یک سیستم پشتیبانی و تیکتینگ کامل (Full-stack) با معماری اصولی، طراحی شده برای مدیریت درخواست‌های کاربران با سه سطح دسترسی مجزا.
 
-### Backend (Django)
+## 🛠 تکنولوژی‌های استفاده شده
+* **Backend:** Django, Django REST Framework, SQLite
+* **Frontend:** React, Tailwind CSS, Vite
+* **Authentication:** JWT (JSON Web Tokens)
 
+## 👥 سطوح دسترسی (Roles)
+این سیستم دارای سه سطح کاربری ایزوله است:
+1. **کاربر عادی (Customer):** ثبت تیکت جدید و مشاهده وضعیت/پاسخ‌های تیکت‌های خود.
+2. **پشتیبان (Agent):** مشاهده تیکت‌های ارجاع داده شده یا بدون مسئول، تغییر وضعیت و ثبت پاسخ.
+3. **ادمین (Admin):** دسترسی کامل به سیستم، مشاهده داشبورد آماری، و ارجاع (Assign) تیکت‌ها به پشتیبان‌های مختلف.
+
+---
+
+## 🚀 نصب و راه‌اندازی پروژه‌
+
+### 1️⃣ راه‌اندازی Backend (Django)
+
+ابتدا وارد پوشه بک‌اند شوید و محیط مجازی را بسازید:
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # ویندوز: venv\Scripts\activate
+venv\Scripts\activate
+```
+
+سپس پکیج‌ها را نصب کرده و دیتابیس را آماده کنید:
+```bash
 pip install -r requirements.txt
 python manage.py makemigrations
 python manage.py migrate
+```
+
+یک کاربر ارشد (Superuser) بسازید و سرور را اجرا کنید:
+```bash
 python manage.py createsuperuser
 python manage.py runserver
 ```
 
-### Frontend (React)
+### 2️⃣ راه‌اندازی Frontend (React)
 
+یک ترمینال جدید باز کنید، وارد پوشه فرانت‌اند شوید و سرور ریکت را اجرا کنید:
 ```bash
 cd frontend
 npm install
-npm start
+npm run dev
 ```
 
 ---
 
-## ساخت کاربر با نقش‌های مختلف
+## ⚙️ مدیریت نقش‌های کاربران
 
-از پنل ادمین Django (http://localhost:8000/admin) کاربر بساز و role را تغییر بده:
-- customer → کاربر عادی
-- agent → پشتیبان
-- admin → ادمین
+پس از ساخت کاربر ارشد، از طریق پنل ادمین جنگو (`http://localhost:8000/admin`) وارد شوید. در بخش Users، می‌توانید کاربران جدید بسازید و فیلد **Role** آن‌ها را به یکی از مقادیر زیر تغییر دهید:
+* `customer` (پیش‌فرض)
+* `agent`
+* `admin`
 
 ---
 
-## API Endpoints
+## 🔌 لیست API Endpoints
 
-| Method | URL | توضیح |
-|--------|-----|-------|
-| POST | /api/auth/register/ | ثبت‌نام |
-| POST | /api/auth/login/ | ورود |
-| GET | /api/auth/me/ | اطلاعات کاربر |
-| GET/POST | /api/tickets/ | لیست / ایجاد تیکت |
-| GET/PATCH | /api/tickets/:id/ | جزئیات / بروزرسانی |
-| POST | /api/tickets/:id/reply/ | پاسخ تیکت |
-| PATCH | /api/tickets/:id/assign/ | assign به پشتیبان |
-| GET | /api/dashboard/stats/ | آمار داشبورد |
-| GET/POST | /api/categories/ | دسته‌بندی‌ها |
+| Method | URL | توضیحات |
+| :--- | :--- | :--- |
+| **POST** | `/api/auth/register/` | ثبت‌نام کاربر جدید |
+| **POST** | `/api/auth/login/` | ورود و دریافت توکن JWT |
+| **GET** | `/api/auth/me/` | دریافت اطلاعات کاربری (پروفایل) |
+| **GET/POST** | `/api/tickets/` | دریافت لیست تیکت‌ها / ایجاد تیکت جدید |
+| **GET/PATCH**| `/api/tickets/:id/` | دریافت جزئیات یک تیکت / بروزرسانی وضعیت |
+| **POST** | `/api/tickets/:id/reply/` | ثبت پاسخ جدید برای تیکت |
+| **PATCH** | `/api/tickets/:id/assign/` | ارجاع تیکت به یک پشتیبان (فقط ادمین) |
+| **GET** | `/api/dashboard/stats/` | دریافت آمار کلی برای داشبورد (فقط ادمین) |
+| **GET/POST** | `/api/categories/` | مدیریت دسته‌بندی‌های تیکت |
