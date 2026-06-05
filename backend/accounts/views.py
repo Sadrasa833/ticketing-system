@@ -38,7 +38,6 @@ class PasswordResetRequestView(APIView):
             return Response({"detail": "لینک بازیابی رمز عبور به ایمیل شما ارسال شد."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# ویوی ثبت نهایی رمز عبور جدید
 class PasswordResetConfirmView(APIView):
     permission_classes = [permissions.AllowAny]
 
