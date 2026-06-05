@@ -89,11 +89,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'sadrasalehpour.yahoo.com@gmail.com'  # ایمیل خودت رو اینجا بنویس
-EMAIL_HOST_PASSWORD = 'ifqs hjbi jbhf orzu' # رمز عبور رو اینجا بنویس
+EMAIL_HOST_USER = 'sadrasalehpour.yahoo.com@gmail.com'  
+EMAIL_HOST_PASSWORD = 'ifqs hjbi jbhf orzu' 
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://localhost:5173",    # پورت پیش‌فرض Vite
-    "http://127.0.0.1:5173",  # بعضی وقتا مرورگر با این آدرس ریکوئست میده
+    "http://localhost:5173",    
+    "http://127.0.0.1:5173",  
 ]
