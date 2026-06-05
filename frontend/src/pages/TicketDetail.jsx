@@ -18,13 +18,11 @@ export default function TicketDetail() {
   const [reply, setReply] = useState('');
   const [sending, setSending] = useState(false);
 
-  // دریافت اطلاعات تیکت و لیست پشتیبان‌ها (فقط برای ادمین)
   useEffect(() => { 
     fetchTicket(); 
     if (user?.role === 'admin') fetchAgents(); 
   }, [id, user?.role]);
 
-  // اسکرول خودکار به آخرین پیام
   useEffect(() => { 
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); 
   }, [ticket?.replies]);
@@ -50,7 +48,6 @@ export default function TicketDetail() {
     }
   };
 
-  // ثبت پاسخ جدید
   const handleReply = async (e) => {
     e.preventDefault();
     if (!reply.trim()) return;
@@ -58,9 +55,8 @@ export default function TicketDetail() {
     try {
       await api.post(`/tickets/${id}/reply/`, { message: reply });
       setReply('');
-      fetchTicket(); // دریافت مجدد پیام‌ها
+      fetchTicket();
     } catch (error) {
-      // اگر خطای 403 بود، یعنی تیکت مال این پشتیبان نیست
       if (error.response?.status === 403) {
         toast.error(error.response.data.detail || 'شما حق پاسخگویی به این تیکت را ندارید.');
       } else {
@@ -71,24 +67,22 @@ export default function TicketDetail() {
     }
   };
 
-  // ارجاع تیکت به پشتیبان (فقط ادمین)
   const handleAssign = async (agentId) => {
     if (!agentId) return;
     try {
       await api.patch(`/tickets/${id}/assign/`, { agent_id: agentId });
       toast.success('تیکت با موفقیت به پشتیبان ارجاع شد!');
-      fetchTicket(); // آپدیت صفحه برای نمایش اسم پشتیبان جدید
+      fetchTicket();
     } catch (error) {
       toast.error('خطا در ارجاع تیکت.');
     }
   };
 
-  // تغییر وضعیت تیکت (برای ادمین و پشتیبان)
   const handleStatusChange = async (newStatus) => {
     try {
       await api.patch(`/tickets/${id}/`, { status: newStatus });
       toast.success('وضعیت تیکت با موفقیت تغییر کرد!');
-      fetchTicket(); // دریافت مجدد اطلاعات برای آپدیت شدن صفحه
+      fetchTicket();
     } catch (error) {
       toast.error('خطا در تغییر وضعیت تیکت.');
     }
@@ -114,7 +108,6 @@ export default function TicketDetail() {
             <h1 className="text-2xl font-bold text-gray-800">#{ticket.id} - {ticket.title}</h1>
             
             <div className="flex items-center gap-2">
-              {/* بخش تغییر وضعیت: اگر ادمین یا پشتیبان بود دراپ‌داون، در غیر اینصورت نشانگر ساده */}
               {user?.role === 'admin' || user?.role === 'agent' ? (
                 <select
                   value={ticket.status}
@@ -143,7 +136,6 @@ export default function TicketDetail() {
             )}
           </div>
 
-          {/* باکس اختصاصی ادمین برای ارجاع تیکت */}
           {user?.role === 'admin' && (
             <div className="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-100 flex items-center justify-between">
               <span className="text-sm font-medium text-indigo-800">ارجاع تیکت به:</span>
