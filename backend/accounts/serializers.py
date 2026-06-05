@@ -21,13 +21,11 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 
     def validate(self, data):
         try:
-            # دیکود کردن شناسه کاربر
             uid = force_str(urlsafe_base64_decode(data['uidb64']))
             user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             raise serializers.ValidationError({"uidb64": "شناسه کاربر معتبر نیست."})
 
-        # بررسی اعتبار توکن ساخت شده برای این کاربر
         if not default_token_generator.check_token(user, data['token']):
             raise serializers.ValidationError({"token": "لینک بازیابی معتبر نیست یا منقضی شده است."})
 
