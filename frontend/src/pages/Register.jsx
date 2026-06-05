@@ -16,7 +16,6 @@ const handleSubmit = async (e) => {
       await api.post('/auth/register/', form);
       navigate('/login');
     } catch (err) {
-      // اینجا خطای واقعی رو از بک‌اند می‌گیریم و نشون می‌دیم
       if (err.response && err.response.data) {
         const backendErrors = Object.values(err.response.data).flat().join(' | ');
         setError(`خطا: ${backendErrors}`);
