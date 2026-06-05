@@ -9,7 +9,7 @@ import NewTicket from './pages/NewTicket';
 import Navbar from './components/Navbar';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
-import { Toaster } from 'react-hot-toast'; // پکیج جدید برای پاپ‌آپ‌های خوشگل
+import { Toaster } from 'react-hot-toast'; 
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -21,7 +21,6 @@ function PrivateRoute({ children }) {
   return user ? children : <Navigate to="/login" />;
 }
 
-// این کامپوننت جدید، مشکل موندن تو صفحه لاگین رو حل میکنه
 function PublicRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return null;
