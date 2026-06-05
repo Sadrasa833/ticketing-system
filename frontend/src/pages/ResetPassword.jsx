@@ -4,7 +4,7 @@ import api from '../api/axios';
 import toast from 'react-hot-toast';
 
 export default function ResetPassword() {
-  const { uid, token } = useParams(); // دریافت پارامترها از لینک ایمیل
+  const { uid, token } = useParams(); 
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
