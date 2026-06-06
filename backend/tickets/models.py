@@ -32,6 +32,8 @@ class Ticket(models.Model):
     def __str__(self):
         return f"#{self.id} - {self.title}"
 
+
+
 class TicketReply(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='replies')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -40,3 +42,30 @@ class TicketReply(models.Model):
 
     def __str__(self):
         return f"Reply by {self.author} on #{self.ticket.id}"
+
+class LiveChatSession(models.Model):
+    """ این همون میز چت موقت ماست """
+    class Status(models.TextChoices):
+        WAITING = 'waiting', 'در انتظار پشتیبان'
+        ACTIVE = 'active', 'در حال گفتگو'
+        CLOSED = 'closed', 'بسته شده'
+
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='my_live_chats')
+    agent = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_chats')
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.WAITING)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"LiveChat #{self.id} - {self.customer.username}"
+
+class LiveChatMessage(models.Model):
+    """ این جدول، پیام‌هایی هست که روی اون میز رد و بدل میشه """
+    session = models.ForeignKey(LiveChatSession, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Msg by {self.sender.username} in Chat #{self.session.id}"

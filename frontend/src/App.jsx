@@ -9,7 +9,9 @@ import NewTicket from './pages/NewTicket';
 import Navbar from './components/Navbar';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
-import { Toaster } from 'react-hot-toast'; // پکیج جدید برای پاپ‌آپ‌های خوشگل
+import { Toaster } from 'react-hot-toast'; 
+import LiveChatWidget from './components/LiveChatWidget';
+import AgentLiveChats from './pages/AgentLiveChats';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -21,7 +23,6 @@ function PrivateRoute({ children }) {
   return user ? children : <Navigate to="/login" />;
 }
 
-// این کامپوننت جدید، مشکل موندن تو صفحه لاگین رو حل میکنه
 function PublicRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return null;
@@ -43,6 +44,7 @@ function AppRoutes() {
         <Route path="/tickets" element={<PrivateRoute><TicketList /></PrivateRoute>} />
         <Route path="/tickets/new" element={<PrivateRoute><NewTicket /></PrivateRoute>} />
         <Route path="/tickets/:id" element={<PrivateRoute><TicketDetail /></PrivateRoute>} />
+        <Route path="/live-chats" element={<AgentLiveChats />} />
       </Routes>
     </BrowserRouter>
   );
@@ -52,6 +54,7 @@ export default function App() {
   return (
     <AuthProvider>
       <Toaster position="top-center" />
+      <LiveChatWidget />
       <AppRoutes />
     </AuthProvider>
   );

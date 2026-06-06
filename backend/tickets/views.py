@@ -4,7 +4,15 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .models import Ticket, TicketReply, Category
 from .serializers import TicketSerializer, TicketCreateSerializer, TicketReplySerializer, CategorySerializer
-from django.db.models import Q
+from django.db.models import Q,Count
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import get_user_model
+from .models import LiveChatSession
+from .serializers import LiveChatSessionSerializer
+
+
+User = get_user_model()
+
 
 
 class IsAdminOrAgent(permissions.BasePermission):
@@ -113,3 +121,57 @@ class CategoryListView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+
+
+
+
+class StartLiveChatView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        existing_chat = LiveChatSession.objects.filter(
+            customer=request.user, status__in=['waiting', 'active']
+        ).first()
+
+        if existing_chat:
+            return Response(LiveChatSessionSerializer(existing_chat).data, status=status.HTTP_200_OK)
+
+       
+        available_agents = User.objects.filter(role='agent', is_available=True).annotate(
+            active_chat_count=Count('assigned_chats', filter=Q(assigned_chats__status='active'))
+        ).order_by('active_chat_count')
+
+        best_agent = available_agents.first()
+
+        if not best_agent:
+            return Response(
+                {"error": "در حال حاضر هیچ پشتیبانی آنلاین نیست. لطفاً یک تیکت جدید ثبت کنید."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        new_chat = LiveChatSession.objects.create(
+            customer=request.user,
+            agent=best_agent,
+            status='active'
+        )
+
+        return Response(LiveChatSessionSerializer(new_chat).data, status=status.HTTP_201_CREATED)
+
+
+class AgentActiveChatsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        if request.user.role == 'customer':
+            return Response({"error": "شما اجازه دسترسی ندارید."}, status=status.HTTP_403_FORBIDDEN)
+        
+        from django.db.models import Q
+        chats = LiveChatSession.objects.filter(
+            Q(agent__isnull=True) | Q(agent=request.user),
+            status='active'
+        ).order_by('-created_at')
+        
+        serializer = LiveChatSessionSerializer(chats, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
