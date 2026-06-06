@@ -9,7 +9,9 @@ class User(AbstractUser):
 
     role = models.CharField(max_length=10, choices=Role.choices, default=Role.CUSTOMER)
     phone = models.CharField(max_length=11, blank=True)
+    is_available = models.BooleanField(default=False, verbose_name='آماده پاسخگویی')
 
+    
     def __str__(self):
         return f"{self.username} ({self.role})"
 

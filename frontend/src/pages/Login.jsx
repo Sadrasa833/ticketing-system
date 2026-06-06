@@ -15,7 +15,7 @@ export default function Login() {
     try {
       await login(form.username, form.password);
       toast.success('با موفقیت وارد شدید!');
-      navigate('/');
+      navigate('/'); 
     } catch {
       toast.error('نام کاربری یا رمز عبور اشتباه است');
     } finally {
